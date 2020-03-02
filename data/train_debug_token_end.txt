@@ -1,0 +1,3 @@
+i,have,a,cat,<END>
+i,have,a,dog,<END>
+i,have,a,cat,and,a,dog,<END>
