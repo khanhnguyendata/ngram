@@ -1,2 +1,3 @@
-I have a cat and a donkey.
-He has a dog and a donkey.
+I have a dog and two cats.
+He has a donkey.
+She has a cat.

@@ -1,2 +1,3 @@
-i,have,a,cat,and,a,donkey,<END>
-he,has,a,dog,and,a,donkey,<END>
+i,have,a,dog,and,two,cats,<END>
+he,has,a,donkey,<END>
+she,has,a,cat,<END>
