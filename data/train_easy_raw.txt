@@ -1,0 +1,3 @@
+I have a cat.
+I have a dog.
+I have a cat and a dog.
