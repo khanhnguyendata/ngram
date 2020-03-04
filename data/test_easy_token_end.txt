@@ -1,1 +1,1 @@
-i,have,a,cat,and,a,dog,and,a,donkey,<END>
+i,have,a,cat,and,a,donkey,and,a,dog,<END>

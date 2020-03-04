@@ -1,5 +1,5 @@
 I have a cat.
 I have two cats.
-I have a dog.
+I have nothing.
 He has a dog.
 I have a cat and a dog.
