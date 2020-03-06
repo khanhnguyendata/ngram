@@ -34089,4 +34089,4 @@ i'm,the,bloody,kingslayer,remember
 when,i,say,you,have,honor,that's,like,a,whore,vouchsafing,your,maidenhood
 he,leaned,back,and,looked,up,at,her
 steelshanks,is,on,his,way,back,north,to,deliver,arya,stark,to,roose,bolton
-you,gave
+you,<END>

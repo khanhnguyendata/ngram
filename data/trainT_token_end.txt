@@ -31070,4 +31070,4 @@ return,to,your,duties,<END>
 and,tell,ser,donnel,to,add,a,weathervane,to,his,shield,<END>
 and,then,he,was,alone,with,the,knight,of,flowers,<END>
 slim,as,a,sword,lithe,and,fit,ser,loras,tyrell,wore,a,snowy,linen,tunic,and,white,wool,breeches,with,a,gold,belt,around,his,waist,and,a,gold,rose,clasping,his,fine,silk,cloak,<END>
-his,hair,was,a,soft,brown,tumble,and,his,eyes,were,brown,as,well,and,bright,with
+his,hair,was,a,soft,brown,tumble,and,his,eyes,were,brown,as,well,and,bright,<END>

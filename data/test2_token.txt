@@ -24704,4 +24704,4 @@ and,scarlett,did,not,feel,equal,to,explaining,that,she,could,not,sleep,in,a,ligh
 you'd,never,wake,up,unless,she,screamed,and,then,you'd,probably,slap,her,he,said,shortly
 scarlett,was,annoyed,at,the,weight,he,attached,to,bonnie's,night,terrors,but,she,thought,she,could,eventually,remedy,the,state,of,affairs,and,transfer,the,child,back,to,the,nursery
 all,children,were,afraid,of,the,dark,and,the,only,cure,was,firmness
-rhett,was,just,being,perverse,in,the,matter,making,her,appear,a,poor,mother,just,to,pay,her,back
+rhett,was,just,being,perverse,in,the,matter,making,her,appear,a,poor,mother,just,to,pay,her,<END>

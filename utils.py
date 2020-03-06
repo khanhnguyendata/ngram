@@ -1,3 +1,4 @@
+import numpy as np
 from nltk import ngrams
 from math import log2, isclose
 
@@ -44,55 +45,61 @@ class UnigramModel():
 
         self.train_prob_denom = train.token_count + len(self.train_unigram_counts) * self.k
         self.train_prob_noms = {}
-        self.train_logprobs = {}
         self.train_probs = {}
 
-        for unigram, unigram_count in self.train_unigram_counts.items():  # This includes <UNK> just added
+        for unigram, unigram_count in self.train_unigram_counts.items():
             prob_nom = self.train_unigram_counts[unigram]['all'] + self.k
             self.train_prob_noms[unigram] = prob_nom
-            logprob = log2(prob_nom) - log2(self.train_prob_denom)
-            self.train_logprobs[unigram] = logprob
-            self.train_probs[unigram] = 2 ** logprob
-        assert isclose(sum(2 ** logprob for logprob in self.train_logprobs.values()), 1, rel_tol=1e-5)
+            prob = prob_nom / self.train_prob_denom
+            self.train_probs[unigram] = prob
+        self.train_probs[('<UNK>',)] = self.k / self.train_prob_denom
+        assert isclose(sum(prob for prob in self.train_probs.values()), 1, rel_tol=1e-5)
 
     def calculate_avg_ll(self, test):
         self.test_ll = 0
         self.test_unigram_counts = test.all_ngram_counts[1].copy()
         self.test_modified_unigram_counts = {}
-        self.test_unigram_lls = {}
+        self.test_unigram_infos = {}
 
         for unigram, unigram_count in self.test_unigram_counts.items():
             if unigram not in self.train_unigrams:
                 unigram = (('<UNK>',))
-            unigram_ll = unigram_count['all'] * self.train_logprobs[unigram]
+            unigram_train_prob = self.train_probs[unigram]
+            unigram_test_count = unigram_count['all']
+            unigram_ll = unigram_test_count * log2(unigram_train_prob)
             self.test_ll += unigram_ll
 
             # Tracking relevant information when going through test set
-            self.test_modified_unigram_counts[unigram] = self.test_modified_unigram_counts.get(unigram, 0) + \
-                                                         unigram_count['all']
-            self.test_unigram_lls[unigram] = self.test_unigram_lls.get(unigram, 0) + unigram_ll
+            self.test_modified_unigram_counts[unigram] = self.test_modified_unigram_counts.get(unigram, 0) + unigram_count['all']
+            self.test_unigram_infos[unigram] = self.test_unigram_infos.get(unigram, {})
+            if 'log' not in self.test_unigram_infos[unigram]:
+                self.test_unigram_infos[unigram]['log'] = log2(unigram_train_prob)
+            self.test_unigram_infos[unigram]['count'] = self.test_unigram_infos[unigram].get('count', 0) + unigram_test_count
+
 
         assert sum(self.test_modified_unigram_counts.values()) == test.token_count
-        assert isclose(self.test_ll, sum(self.test_unigram_lls.values()), rel_tol=1)
+        assert isclose(self.test_ll, sum(info['count'] * info['log'] for unigram, info in self.test_unigram_infos.items()), rel_tol=1)
 
         self.avg_test_ll = self.test_ll / test.token_count
         return self.avg_test_ll
 
 
 class MultigramModel():
-    def __init__(self, train, n, k=1, verbose=False):
+    def __init__(self, train, n, k=1):
         self.n = n
-        self.k = k
         self.train_ngram_counts = train.all_ngram_counts[self.n].copy()
         self.train_prevgram_counts = train.all_ngram_counts[self.n - 1].copy()
         self.train_prevgrams = set(self.train_prevgram_counts.keys())
         self.train_ngrams = set(self.train_ngram_counts.keys())
         self.train_unigram_vocab_size = len(train.all_ngram_counts[1])
-        self.train_prevgram_vocab_size = len(self.train_prevgram_counts)
+        self.train_prevgram_vocab_size = len(self.train_prevgrams)
+        self.train_ngram_vocab_size = len(self.train_ngrams)
 
         # Estimate prevgram probabilities at start of sentence
         self.train_startprobs = {}
-        startprob_denom = train.sentence_count + (self.train_prevgram_vocab_size + 1) * k
+        startprob_denom = train.sentence_count + (self.train_unigram_vocab_size + 1) * k
+        # print(train.sentence_count, self.train_unigram_vocab_size, self.train_prevgram_vocab_size)
+        # print(startprob_denom)
         for prevgram, prevgram_count in self.train_prevgram_counts.items():
             if prevgram_count['start']:
                 startprob_nom = prevgram_count['start'] + k
@@ -103,14 +110,13 @@ class MultigramModel():
         self.train_condprobs = {}
         for ngram, ngram_count in self.train_ngram_counts.items():
             prevgram = ngram[:-1]
-            condprob_denom = self.train_prevgram_counts[prevgram]['all'] + (self.train_unigram_vocab_size + 1) * k
             condprob_nom = ngram_count['all'] + k
+            condprob_denom = self.train_prevgram_counts[prevgram]['all'] + (self.train_unigram_vocab_size + 1) * k
             self.train_condprobs[ngram] = condprob_nom / condprob_denom
-            if prevgram + ('<UNK>',) not in self.train_condprobs.keys():
-                ngram = prevgram + ('<UNK>',)
+            if prevgram + ('<UNK>',) not in self.train_condprobs:
                 self.train_condprobs[prevgram + ('<UNK>',)] = k / condprob_denom
 
-        self.train_condprobs[('<PREV_UNK>', '<UNK>')] = k / (self.train_unigram_vocab_size + 1) * k
+        self.train_condprobs[('<PREV_UNK>', '<UNK>')] = 1 / (self.train_unigram_vocab_size + 1)
 
     def calculate_avg_ll(self, test, verbose=False):
         self.test_ll = 0
@@ -118,22 +124,41 @@ class MultigramModel():
         self.test_prevgram_counts = test.all_ngram_counts[self.n - 1].copy()
         self.test_modified_ngram_counts = {}
         self.test_ngram_lls = {}
+        self.test_startinfos = {}
+        self.test_condinfos = {}
 
         # Aggregate log probabilities for prevgrams at start of sentence
         for prevgram, prevgram_count in self.test_prevgram_counts.items():
             if prevgram_count['start']:
-                if prevgram not in self.train_prevgrams:
+                if prevgram not in self.train_startprobs:
                     prevgram = ('<PREV_UNK>',)
-                self.test_ll += prevgram_count['start'] * log2(self.train_startprobs[prevgram])
+                prevgram_test_startcount = prevgram_count['start']
+                prevgram_train_startprob = self.train_startprobs[prevgram]
+                self.test_ll += prevgram_test_startcount * log2(prevgram_train_startprob)
+
+                self.test_startinfos[prevgram] = self.test_startinfos.get(prevgram, {})
+                if 'log' not in self.test_startinfos[prevgram]:
+                    self.test_startinfos[prevgram]['log'] = log2(prevgram_train_startprob)
+                self.test_startinfos[prevgram]['count'] = self.test_startinfos[prevgram].get('count', 0) + prevgram_test_startcount
 
         # Aggregate log conditional probabilities for ngrams
         for ngram, ngram_count in self.test_ngram_counts.items():
+            original_ngram = ngram
             prevgram = ngram[:-1]
+            # Prevgram does not exist in the first place in train text
             if prevgram not in self.train_prevgrams:
                 ngram = ('<PREV_UNK>', '<UNK>')
+            # Prevgram exists in train text but ngram does not
             elif ngram not in self.train_ngrams:
                 ngram = prevgram + ('<UNK>',)
-            self.test_ll += ngram_count['all'] * log2(self.train_condprobs[ngram])
+            ngram_test_count = ngram_count['all']
+            ngram_train_condprob = self.train_condprobs[ngram]
+            self.test_ll += ngram_test_count * log2(ngram_train_condprob)
+
+            self.test_condinfos[ngram] = self.test_condinfos.get(ngram, {})
+            if 'log' not in self.test_condinfos[ngram]:
+                self.test_condinfos[ngram]['log'] = log2(ngram_train_condprob)
+            self.test_condinfos[ngram]['count'] = self.test_condinfos[ngram].get('count', 0) + ngram_test_count
 
         self.avg_test_ll = self.test_ll / test.token_count
         return self.avg_test_ll

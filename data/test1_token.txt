@@ -32786,4 +32786,4 @@ the,poor,fellows,went,before,them,forcing,men,aside,with,their,shields,walling,o
 cersei,followed,where,they,led,her,head,held,stiffly,her,eyes,on,the,far,distance
 every,step,brought,the,red,keep,nearer
 every,step,brought,her,closer,to,her,son,and,her,salvation
-it,seemed,to
+it,seemed,<END>

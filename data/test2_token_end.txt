@@ -23093,4 +23093,4 @@ he,took,her,to,plays,and,annoyed,her,by,whispering,that,god,probably,didn't,appr
 he,encouraged,her,to,speak,her,mind,to,be,flippant,and,daring,<END>
 she,picked,up,from,him,the,gift,of,stinging,words,and,sardonic,phrases,and,learned,to,relish,using,them,for,the,power,they,gave,her,over,other,people,<END>
 but,she,did,not,possess,his,sense,of,humor,which,tempered,his,malice,nor,his,smile,that,jeered,at,himself,even,while,he,was,jeering,others,<END>
-he,made
+he,<END>
