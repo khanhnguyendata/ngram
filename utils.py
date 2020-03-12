@@ -3,13 +3,15 @@ from nltk import ngrams
 from math import log2, isclose
 
 
-def get_tokenized_sentences(tokenized_file_name):
+def get_tokenized_sentences(tokenized_file_name, padding=0):
     with open(tokenized_file_name) as file_handle:
         sentences = file_handle.read().splitlines()
         for sentence in sentences:
             if sentence:
-                tokenized_sentences = sentence.split(',')
-                yield tokenized_sentences
+                tokenized_sentence = sentence.split(',')
+                if tokenized_sentence:
+                    tokenized_sentence = ['<S>']*padding + tokenized_sentence
+                yield tokenized_sentence
 
 
 class WordCounter:
@@ -25,7 +27,8 @@ class WordCounter:
             if sentence:
                 self.sentence_count += 1
             for token in sentence:
-                self.token_count += 1
+                if token != '<S>':
+                    self.token_count += 1
             for ngram_length in range(1, 6):
                 ngram_counts = self.all_ngram_counts[ngram_length]
                 for i, sentence_ngram in enumerate(ngrams(sentence, ngram_length)):
@@ -79,86 +82,6 @@ class UnigramModel():
 
         assert sum(self.test_modified_unigram_counts.values()) == test.token_count
         assert isclose(self.test_ll, sum(info['count'] * info['log'] for unigram, info in self.test_unigram_infos.items()), rel_tol=1)
-
-        self.avg_test_ll = self.test_ll / test.token_count
-        return self.avg_test_ll
-
-
-class MultigramModel():
-    def __init__(self, train, n, k=1):
-        self.n = n
-        self.train_ngram_counts = train.all_ngram_counts[self.n].copy()
-        self.train_prevgram_counts = train.all_ngram_counts[self.n - 1].copy()
-        self.train_prevgrams = set(self.train_prevgram_counts.keys())
-        self.train_ngrams = set(self.train_ngram_counts.keys())
-        self.train_unigram_vocab_size = len(train.all_ngram_counts[1])
-        self.train_prevgram_vocab_size = len(self.train_prevgrams)
-        self.train_ngram_vocab_size = len(self.train_ngrams)
-
-        # Estimate prevgram probabilities at start of sentence
-        self.train_startprobs = {}
-        startprob_denom = train.sentence_count + (self.train_unigram_vocab_size + 1) * k
-        # print(train.sentence_count, self.train_unigram_vocab_size, self.train_prevgram_vocab_size)
-        # print(startprob_denom)
-        for prevgram, prevgram_count in self.train_prevgram_counts.items():
-            if prevgram_count['start']:
-                startprob_nom = prevgram_count['start'] + k
-                self.train_startprobs[prevgram] = startprob_nom / startprob_denom
-        self.train_startprobs[('<PREV_UNK>',)] = k / startprob_denom
-
-        # Estimate conditional prob for each ngram
-        self.train_condprobs = {}
-        for ngram, ngram_count in self.train_ngram_counts.items():
-            prevgram = ngram[:-1]
-            condprob_nom = ngram_count['all'] + k
-            condprob_denom = self.train_prevgram_counts[prevgram]['all'] + (self.train_unigram_vocab_size + 1) * k
-            self.train_condprobs[ngram] = condprob_nom / condprob_denom
-            if prevgram + ('<UNK>',) not in self.train_condprobs:
-                self.train_condprobs[prevgram + ('<UNK>',)] = k / condprob_denom
-
-        self.train_condprobs[('<PREV_UNK>', '<UNK>')] = 1 / (self.train_unigram_vocab_size + 1)
-
-    def calculate_avg_ll(self, test, verbose=False):
-        self.test_ll = 0
-        self.test_ngram_counts = test.all_ngram_counts[self.n].copy()
-        self.test_prevgram_counts = test.all_ngram_counts[self.n - 1].copy()
-        self.test_modified_ngram_counts = {}
-        self.test_ngram_lls = {}
-        self.test_startinfos = {}
-        self.test_condinfos = {}
-
-        # Aggregate log probabilities for prevgrams at start of sentence
-        for prevgram, prevgram_count in self.test_prevgram_counts.items():
-            if prevgram_count['start']:
-                if prevgram not in self.train_startprobs:
-                    prevgram = ('<PREV_UNK>',)
-                prevgram_test_startcount = prevgram_count['start']
-                prevgram_train_startprob = self.train_startprobs[prevgram]
-                self.test_ll += prevgram_test_startcount * log2(prevgram_train_startprob)
-
-                self.test_startinfos[prevgram] = self.test_startinfos.get(prevgram, {})
-                if 'log' not in self.test_startinfos[prevgram]:
-                    self.test_startinfos[prevgram]['log'] = log2(prevgram_train_startprob)
-                self.test_startinfos[prevgram]['count'] = self.test_startinfos[prevgram].get('count', 0) + prevgram_test_startcount
-
-        # Aggregate log conditional probabilities for ngrams
-        for ngram, ngram_count in self.test_ngram_counts.items():
-            original_ngram = ngram
-            prevgram = ngram[:-1]
-            # Prevgram does not exist in the first place in train text
-            if prevgram not in self.train_prevgrams:
-                ngram = ('<PREV_UNK>', '<UNK>')
-            # Prevgram exists in train text but ngram does not
-            elif ngram not in self.train_ngrams:
-                ngram = prevgram + ('<UNK>',)
-            ngram_test_count = ngram_count['all']
-            ngram_train_condprob = self.train_condprobs[ngram]
-            self.test_ll += ngram_test_count * log2(ngram_train_condprob)
-
-            self.test_condinfos[ngram] = self.test_condinfos.get(ngram, {})
-            if 'log' not in self.test_condinfos[ngram]:
-                self.test_condinfos[ngram]['log'] = log2(ngram_train_condprob)
-            self.test_condinfos[ngram]['count'] = self.test_condinfos[ngram].get('count', 0) + ngram_test_count
 
         self.avg_test_ll = self.test_ll / test.token_count
         return self.avg_test_ll

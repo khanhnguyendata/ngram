@@ -1,4 +1,4 @@
-i,have,a,cat,<END>
+i,have,a,cat,and,i,love,a,dog<END>
 i,have,two,cats,<END>
 i,have,nothing,<END>
 he,has,a,dog,<END>
