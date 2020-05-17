@@ -1,4 +1,5 @@
 from nltk.tokenize import RegexpTokenizer, sent_tokenize
+from typing import List
 
 
 def replace_characters(text: str) -> str:
@@ -13,7 +14,7 @@ def replace_characters(text: str) -> str:
     return text
 
 
-def generate_tokenized_sentences(paragraph: str) -> str:
+def generate_tokenized_sentences(paragraph: str) -> List[str]:
     """
     Tokenize each sentence in paragraph.
     For each sentence, tokenize each words and return the tokenized sentence one at a time.
@@ -24,11 +25,11 @@ def generate_tokenized_sentences(paragraph: str) -> str:
     for sentence in sent_tokenize(paragraph):
         tokenized_sentence = word_tokenizer.tokenize(sentence)
         if tokenized_sentence:
-            tokenized_sentence.append('<END>')
+            tokenized_sentence.append('[END]')
             yield tokenized_sentence
 
 
-def tokenize_raw_text(raw_text_path: str, token_text_path: str):
+def tokenize_raw_text(raw_text_path: str, token_text_path: str) -> None:
     """
     Read a input text file and write its content to an output text file in the form of tokenized sentences
     :param raw_text_path: path of raw input text file
