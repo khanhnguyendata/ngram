@@ -1,4 +1,4 @@
-from typing import List
+from typing import Iterator
 from math import log2
 
 
@@ -13,7 +13,7 @@ class UnigramCounter:
         self.counts = {}
         self.count()
 
-    def get_tokenized_sentences(self, file_name: str) -> List[str]:
+    def get_tokenized_sentences(self, file_name: str) -> Iterator[str]:
         """
         Return tokenized sentence one at a time from a tokenized text
         :param file_name: path of tokenized text

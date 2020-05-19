@@ -1,5 +1,5 @@
 from nltk.tokenize import RegexpTokenizer, sent_tokenize
-from typing import List
+from typing import List, Iterator
 
 
 def replace_characters(text: str) -> str:
@@ -14,7 +14,7 @@ def replace_characters(text: str) -> str:
     return text
 
 
-def generate_tokenized_sentences(paragraph: str) -> List[str]:
+def generate_tokenized_sentences(paragraph: str) -> Iterator[str]:
     """
     Tokenize each sentence in paragraph.
     For each sentence, tokenize each words and return the tokenized sentence one at a time.
