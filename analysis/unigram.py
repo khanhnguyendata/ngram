@@ -9,8 +9,6 @@ class UnigramCounter:
         :param file_name: path of tokenized text. Each line is a sentence with tokens separated by comma.
         """
         self.sentence_generator = self.get_tokenized_sentences(file_name)
-        self.token_count = 0
-        self.counts = {}
         self.count()
 
     def get_tokenized_sentences(self, file_name: str) -> Iterator[str]:
@@ -27,6 +25,9 @@ class UnigramCounter:
         """
         Count number of unigrams in text, one sentence at a time
         """
+        self.token_count = 0
+        self.counts = {}
+
         for sentence in self.sentence_generator:
             self.token_count += len(sentence)
             for unigram in sentence:
