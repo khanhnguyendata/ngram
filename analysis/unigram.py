@@ -2,33 +2,36 @@ from typing import Iterator
 from math import log2
 
 
+def get_tokenized_sentences(file_name: str) -> Iterator[str]:
+    """
+    Return tokenized sentence one at a time from a tokenized text
+    :param file_name: path of tokenized text
+    """
+    with open(file_name) as file_handle:
+        for sentence in file_handle.read().splitlines():
+            tokenized_sentence = sentence.split(',')
+            yield tokenized_sentence
+
+
 class UnigramCounter:
     def __init__(self, file_name: str) -> None:
         """
         Initialize unigram counter from tokenized text and count number of unigrams in text
         :param file_name: path of tokenized text. Each line is a sentence with tokens separated by comma.
         """
-        self.sentence_generator = self.get_tokenized_sentences(file_name)
+        self.sentence_generator = get_tokenized_sentences(file_name)
         self.count()
-
-    def get_tokenized_sentences(self, file_name: str) -> Iterator[str]:
-        """
-        Return tokenized sentence one at a time from a tokenized text
-        :param file_name: path of tokenized text
-        """
-        with open(file_name) as file_handle:
-            for sentence in file_handle.read().splitlines():
-                tokenized_sentence = sentence.split(',')
-                yield tokenized_sentence
 
     def count(self) -> None:
         """
         Count number of unigrams in text, one sentence at a time
         """
+        self.sentence_count = 0
         self.token_count = 0
         self.counts = {}
 
         for sentence in self.sentence_generator:
+            self.sentence_count += 1
             self.token_count += len(sentence)
             for unigram in sentence:
                 self.counts[unigram] = self.counts.get(unigram, 0) + 1
@@ -52,8 +55,8 @@ class UnigramModel:
         :param k: smoothing pseudo-count for each unigram
         """
         self.probs = {}
-        for unigram, count in self.counts.items():
-            prob_nom = count + k
+        for unigram, unigram_count in self.counts.items():
+            prob_nom = unigram_count + k
             prob_denom = self.counter.token_count + k * self.vocab_size
             self.probs[unigram] = prob_nom / prob_denom
 
