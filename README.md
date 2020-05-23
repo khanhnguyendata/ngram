@@ -8,6 +8,6 @@ Currently, language models based on neural networks, and especially [transformer
 * **Part 1:** Unigram model ([code](https://github.com/seismatica/ngram/blob/master/analysis/part1.ipynb), [write-up](https://medium.com/mti-technology/n-gram-language-model-b7c2fc322799?source=friends_link&sk=d03df89a05762efb92a411874e84fea9))
 ![train_80_20](viz/train_80_20.png)
 * **Part 2:** Higher n-gram models *(coming soon)*
-* **Part 1:** Expectation-maximization algorithm to combine n-gram models *(coming soon)*
+* **Part 3:** Expectation-maximization algorithm to combine n-gram models *(coming soon)*
 
 
