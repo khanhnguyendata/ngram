@@ -1,5 +1,5 @@
 from nltk.tokenize import RegexpTokenizer, sent_tokenize
-from typing import List, Iterator
+from typing import Iterator
 
 
 def replace_characters(text: str) -> str:
@@ -43,3 +43,14 @@ def tokenize_raw_text(raw_text_path: str, token_text_path: str) -> None:
             for tokenized_sentence in generate_tokenized_sentences(paragraph):
                 write_handle.write(','.join(tokenized_sentence))
                 write_handle.write('\n')
+
+
+def get_tokenized_sentences(file_name: str) -> Iterator[str]:
+    """
+    Return tokenized sentence one at a time from a tokenized text
+    :param file_name: path of tokenized text
+    """
+    with open(file_name) as file_handle:
+        for sentence in file_handle.read().splitlines():
+            tokenized_sentence = sentence.split(',')
+            yield tokenized_sentence

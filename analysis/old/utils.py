@@ -1,4 +1,3 @@
-import numpy as np
 from nltk import ngrams
 from math import log2, isclose
 

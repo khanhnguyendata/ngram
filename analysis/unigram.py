@@ -1,16 +1,5 @@
-from typing import Iterator
+from preprocess import get_tokenized_sentences
 from math import log2
-
-
-def get_tokenized_sentences(file_name: str) -> Iterator[str]:
-    """
-    Return tokenized sentence one at a time from a tokenized text
-    :param file_name: path of tokenized text
-    """
-    with open(file_name) as file_handle:
-        for sentence in file_handle.read().splitlines():
-            tokenized_sentence = sentence.split(',')
-            yield tokenized_sentence
 
 
 class UnigramCounter:
@@ -41,7 +30,7 @@ class UnigramModel:
     def __init__(self, train_counter: UnigramCounter) -> None:
         """
         Initialize unigram model from unigram counter, count the number of unique unigrams (vocab)
-        :rtype: object
+        :param train_counter: counted unigram counter
         """
         self.counter = train_counter
         self.counts = train_counter.counts.copy()
