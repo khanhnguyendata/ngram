@@ -94,6 +94,7 @@ class NgramModel:
         """
         eval_token_count = sum(len(sentence) for sentence in get_tokenized_sentences(eval_file))
         prob_matrix = np.zeros(shape=(eval_token_count, 6))
+
         # Fill in uniform probability to first column of matrix
         prob_matrix[:, 0] = self.uniform_prob
 
