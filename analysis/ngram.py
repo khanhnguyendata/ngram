@@ -94,8 +94,8 @@ class NgramModel:
         :return: probability matrix of evaluation text (number of words * number of models)
         """
         eval_token_count = sum(len(sentence) for sentence in get_tokenized_sentences(eval_file))
-        eval_prob_matrix = np.zeros(shape=(eval_token_count, 6))
-        eval_prob_matrix[:, 0] = self.uniform_prob
+        prob_matrix = np.zeros(shape=(eval_token_count, 6))
+        prob_matrix[:, 0] = self.uniform_prob
 
         row = 0
         for sentence in get_tokenized_sentences(eval_file):
@@ -106,11 +106,11 @@ class NgramModel:
                     # For n-gram at start of sentence (negative start position)
                     if ngram_start < 0:
                         ngram = tuple(sentence[0:ngram_end])
-                        eval_prob_matrix[row, ngram_length] = self.start_probs.get(ngram, 0)
+                        prob_matrix[row, ngram_length] = self.start_probs.get(ngram, 0)
                     # For regular n-gram (non-negative start position)
                     else:
                         ngram = tuple(sentence[ngram_start:ngram_end])
-                        eval_prob_matrix[row, ngram_length] = self.probs.get(ngram, 0)
+                        prob_matrix[row, ngram_length] = self.probs.get(ngram, 0)
                 row += 1
 
-        return eval_prob_matrix
+        return prob_matrix
