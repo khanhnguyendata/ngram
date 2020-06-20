@@ -1,4 +1,4 @@
-from preprocess import get_tokenized_sentences
+from analysis.preprocess import get_tokenized_sentences
 from math import log2
 
 
