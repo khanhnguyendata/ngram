@@ -1,5 +1,5 @@
 import numpy as np
-from typing import List, Tuple
+from typing import List, Tuple, Callable
 from nltk.util import ngrams
 from analysis.preprocess import get_tokenized_sentences
 
@@ -118,16 +118,17 @@ class NgramModel:
         return prob_matrix
 
 
-def calculate_avg_ll(prob_matrix: np.ndarray, weights: List[float] = None) -> float:
+def calculate_avg_ll(prob_matrix: np.ndarray, weights: List[float] = None, log_function: Callable = np.log2) -> float:
     """
     Calculate average log likelihood from weighted combination of columns in probability matrix of evaluation text
     :param prob_matrix: probability matrix of evaluation text
     :param weights: corresponding weight of each column
+    :param log_function: log function to use (often np.log2 for base 2 log, or np.log for natural log)
     :return: average log likelihood from weighted combination of columns
     """
     n_models = prob_matrix.shape[1]
     if weights is None:
         weights = np.ones(n_models) / n_models
     interpolated_probs = np.sum(prob_matrix * weights, axis=1)
-    average_log_likelihood = np.log2(interpolated_probs).mean()
+    average_log_likelihood = log_function(interpolated_probs).mean()
     return average_log_likelihood
