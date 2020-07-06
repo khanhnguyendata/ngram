@@ -1,5 +1,5 @@
 import numpy as np
-from typing import List, Tuple, Callable
+from typing import List, Tuple, Callable, Union
 from nltk.util import ngrams
 from analysis.preprocess import get_tokenized_sentences
 
@@ -132,3 +132,13 @@ def calculate_avg_ll(prob_matrix: np.ndarray, weights: List[float] = None, log_f
     interpolated_probs = np.sum(prob_matrix * weights, axis=1)
     average_log_likelihood = log_function(interpolated_probs).mean()
     return average_log_likelihood
+
+
+def calculate_avg_ln(prob_matrix: np.array, weights: Union[List[float], np.array] = None) -> float:
+    """
+    Calculate average natural log likelihood of evaluation text with given interpolation weights
+    :param prob_matrix: probability matrix of n_words x n_models
+    :param weights: given weights for each model
+    :return: average natural log of evaluation text with given weights
+    """
+    return calculate_avg_ll(prob_matrix, weights, log_function=np.log)
