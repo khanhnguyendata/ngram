@@ -9,7 +9,8 @@ Currently, language models based on neural networks, and especially [transformer
 ![train_80_20](viz/train_80_20.png)
 * **Part 2:** Higher n-gram models ([code](analysis/part2.ipynb), [write-up](https://medium.com/@seismatica/n-gram-language-models-70af02e742ad?source=friends_link&sk=b39f09fd75c0ceee72169177b46ebf3a))
 ![ngram_result](viz/ngram_result.png)
-* **Part 3:** Expectation-maximization algorithm to combine n-gram models *(coming soon)*
+* **Part 3:** Expectation-maximization algorithm to combine n-gram models ([code](analysis/part3.ipynb), [write-up](https://medium.com/@seismatica/n-gram-language-models-b125b9b62e58?source=friends_link&sk=db6d12dfaa0cb1382f99b791c5f1974c))
+![em_result](viz/em_result.png)
 
 
  
