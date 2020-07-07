@@ -7,7 +7,7 @@ def optimize_gd(prob_matrix: np.array, learning_rate: float, n_iter: int, init_w
     """
     Optimize model weights using gradient descent
     :param init_weights: initial weights. If None, all models will have equal initial weights.
-    :param prob_matrix: probability matrix of n_words x n_models. The first column must always be the uniform model.
+    :param prob_matrix: probability matrix of n_words x n_models.
     :param learning_rate: fraction of gradient to update model weights in each iteration
     :param n_iter: number of iterations to run gradient descent
     :return: model weights after running gradient descent
@@ -45,7 +45,7 @@ class GradientDescent:
         """
         Update model weights via gradient descent and store intermediate values for plotting
         :param init_weights: initial weights. If None, all models will have equal initial weights.
-        :param prob_matrix: probability matrix of n_words x n_models. The first column must always be the uniform model.
+        :param prob_matrix: probability matrix of n_words x n_models.
         :param learning_rate: fraction of gradient to update model weights in each iteration
         :param n_iter: number of iterations to run gradient descent
         """
@@ -77,7 +77,7 @@ def optimize_em(prob_matrix: np.array, n_iter: int, init_weights: List = None) -
     """
     Optimize model weights using EM algorithm
     :param init_weights: initial weights. If None, all models will have equal initial weights.
-    :param prob_matrix: probability matrix of n_words x n_models. The first column must always be the uniform model.
+    :param prob_matrix: probability matrix of n_words x n_models.
     :param n_iter: number of iterations to run EM
     :return: model weights after running EM
     """
@@ -112,7 +112,7 @@ class EM:
         """
         Update model weights via gradient descent and store intermediate values for plotting
         :param init_weights: initial weights. If None, all models will have equal initial weights.
-        :param prob_matrix: probability matrix of n_words x n_models. The first column must always be the uniform model.
+        :param prob_matrix: probability matrix of n_words x n_models.
         :param n_iter: number of iterations to run gradient descent
         """
         self.tracked_info = {}
