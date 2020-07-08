@@ -1,6 +1,6 @@
 import numpy as np
 from analysis.ngram import calculate_avg_ln
-from typing import List, Union
+from typing import List
 
 
 def optimize_gd(prob_matrix: np.array, learning_rate: float, n_iter: int, init_weights: List = None) -> np.array:
