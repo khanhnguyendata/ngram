@@ -1,4 +1,0 @@
-i,have,a,dog,and,two,cats,<END>
-he,has,a,donkey,<END>
-she,has,nothing,<END>
-i,am,<END>
