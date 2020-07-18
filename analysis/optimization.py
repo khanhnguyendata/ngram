@@ -36,7 +36,7 @@ def optimize_gd(prob_matrix: np.array, learning_rate: float, n_iter: int, init_w
 class GradientDescent:
     def __init__(self) -> None:
         """
-        Implement gradient descent optimization of model weights,
+        Optimize model weights using gradient descent,
         while tracking intermediate values for plotting
         """
         pass
@@ -103,14 +103,14 @@ def optimize_em(prob_matrix: np.array, n_iter: int, init_weights: List = None) -
 class EM:
     def __init__(self) -> None:
         """
-        Implement gradient descent optimization of model weights,
+        Optimization of model weights using expectation-maximization algorithm,
         while tracking intermediate values for plotting
         """
         pass
 
     def fit(self, prob_matrix: np.array, n_iter: int, init_weights: List = None) -> None:
         """
-        Update model weights via gradient descent and store intermediate values for plotting
+        Update model weights via expectation-maximization and store intermediate values for plotting
         :param init_weights: initial weights. If None, all models will have equal initial weights.
         :param prob_matrix: probability matrix of n_words x n_models.
         :param n_iter: number of iterations to run gradient descent
